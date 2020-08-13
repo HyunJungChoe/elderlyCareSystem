@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  </head>
+  <body>
+    <h1 style="text-align:center;">--- 이상 행동 감지--- <p type="text" id="time-result" style="text-align:center;"> </p></h1> 
+    
+    <video width="1920" height="1080" controls autoplay muted>
+    <!-- <source src="{{ url_for('static', filename='h264.mp4') }}"  type="video/mp4"> -->
+    <source src="{{ url_for('static', filename= NewVid ) }}"  type="video/mp4">
+      
+    Your browser does not support the video tag.
+    </video>
+
+
+  <!-- # 최신 파일이 오늘 만든 파일이면 플라스크 서버로 보낸다. -->
+  <script type="text/javascript"> 
+  var d = new Date(); 
+  var currentDate = d.getFullYear() + "년 " + ( d.getMonth() + 1 ) + "월 " + d.getDate() + "일"; 
+  var result = document.getElementById("time-result"); 
+  result.innerHTML = "오늘 날짜는 " + currentDate + " 입니다."; 
+
+  StreamVid = NewVid
+  </script> 
+
+  Now Streaming... {{NewVid}}
+
+  </body>
+</html>
+

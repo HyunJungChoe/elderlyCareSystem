@@ -49,7 +49,7 @@ print('현재 위치: '+ nowlocal)
 print('현재온도 :'+NowTemp)
 print(WeatherCast)
 
-if (WeatherCast.startswith('비')==True):
+if (WeatherCast.startswith('비')==True or WeatherCast.startswith('흐림')==True):
     print(rain)  # 비 
 else:
     print('자외선: '+TodayUV)

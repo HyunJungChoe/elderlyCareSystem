@@ -30,7 +30,7 @@ class mainGUI(QDialog):
 
     def __init__(self, parent=None):
         QDialog.__init__(self, parent)
-        # self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
+        
         
         ##---- PyQt관련 
         self.ui = uic.loadUi("main.ui")  # ui불러오기 
@@ -51,6 +51,7 @@ class mainGUI(QDialog):
         self.th4 = Thread_stream() # camera stream
         self.th5 = Thread_alone() # 독거노인
         self.th6 = Thread_dementia() # 치매환자
+        self.th7 = Flask_start()
 
         ##--- 현재 날짜 세팅 , 함수 실행 , 쓰레드 실행 
         self.dateTimeVar = QDateTime.currentDateTime()  # 값 받아오기 
@@ -62,7 +63,7 @@ class mainGUI(QDialog):
         self.th4.start() # 카메라 스트리밍 실행 
         self.th5.start() # 독거노인 실행 
         self.th6.start() # 치매환자 실행 
-       
+        self.th7.start() # 치매환자 실행 
         
         self.ui.pushButton.clicked.connect(self.google_talk)  # 버튼 눌렀을 때 구글 어시스턴트 실행 
 
@@ -132,12 +133,12 @@ class mainGUI(QDialog):
  
         self.ui.label_weather_6.setText('현재온도 : '+NowTemp+'\n')
         self.ui.label_weather_5.setText(WeatherCast+'\n')
-        if (WeatherCast.startswith('비')==True):
+        if (WeatherCast.startswith('비')==True or WeatherCast.startswith('흐림')==True):
             self.ui.label_weather_4.setText(rain+'\n')
         else:
             self.ui.label_weather_4.setText('자외선 : '+TodayUV+'\n')
         # self.ui.label_weather_4.setText('자외선 : '+TodayUV+'\n')
-        
+
         self.ui.label_weather_3.setText('미세먼지 : '+FineDust+'\n')
         self.ui.label_weather_2.setText('초미세먼지 : '+UltraFineDust+'\n')
         self.ui.label_weather.setText('오존 지수 : '+Ozon+'\n')
@@ -163,11 +164,13 @@ class Thread_dht(QThread):
 
             ht = str("{0}/{1}".format(h,t))
             client.publish("home/1/ht", ht)
-            print('...')
+            print('...ht')
 
             self.change_value1.emit(t)
             self.change_value2.emit(h)
-            time.sleep(60*2)
+            time.sleep(60)
+            # time.sleep(10)
+
 
             # client.publish("home/11/temp", str(t))  # home 의 온도 토픽
             # print("Temperature = {0:0.1f}*C".format(t))
@@ -222,28 +225,32 @@ class Thread_alone(QThread):   ## 독거노인
     def run(self):
             
      ##-------- 독거노인: 움직임 감지 실행  
-        subprocess.Popen(['lxterminal -e python live_alone.py'], cwd='/home/pi/_GUI/', shell=True)
+        # subprocess.Popen(['lxterminal -e python live_alone.py'], cwd='/home/pi/_GUI/', shell=True)   # MQTT 전송
+        subprocess.Popen(['lxterminal -e python live_alone2.py'], cwd='/home/pi/_GUI/', shell=True)    # FCM 전송
+
 
 
 class Thread_dementia(QThread):   ##  치매환자
 
     def __init__(self):
-        QThread.__init__(self)
+        QThread.__init__(self) 
 
     def run(self):
         
          ##-------- 치매환자: 야간 이상행동 감지 실행 
-        subprocess.Popen(['lxterminal -e python dementia.py'], cwd='/home/pi/_GUI/', shell=True)
+        # subprocess.Popen(['lxterminal -e python dementia.py'], cwd='/home/pi/_GUI/', shell=True)
+        subprocess.Popen(['lxterminal -e python dementia2.py'], cwd='/home/pi/_GUI/', shell=True)
 
 
-# class Thread_talk(QThread):   ## 구글 어시스턴트 실행 
 
-#     def __init__(self):
-#         QThread.__init__(self)
+class Flask_start(QThread):   ## Flask 서버 실행 
+
+    def __init__(self):
+        QThread.__init__(self)
         
-#     def run(self):
-#         ##-------------
-#         proc1 = subprocess.Popen('~/googletalk.sh', shell=True,  stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    def run(self):
+        ##-------------
+        proc1 = subprocess.Popen(['lxterminal -e python videoserver.py'], cwd='/home/pi/_GUI/', shell=True)
         
 
 if __name__ == '__main__':

@@ -18,7 +18,8 @@ def on_subscribe(client, userdata, mid, granted_qos):
     
 
 def on_message(client, userdata, msg):
-    if (msg.topic == 'home/1/temp' or msg.topic == 'home/1/humid' ):
+    # if (msg.topic == 'home/1/temp' or msg.topic == 'home/1/humid' ):
+    if (msg.topic == 'home/1/ht'):
         print(msg.topic+": "+str(msg.payload.decode("utf-8"))) #토픽과 메세지를 출력한다.
     
     if (msg.topic == 'home/1/vid'):
